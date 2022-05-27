@@ -6,7 +6,7 @@ pipeline {
         timestamps()
     }
     environment {
-        registry = "mmmain/exam2"
+        registry = "solaris86x/Webtest"
         registryCredential = 'dockerhub'
     }
     stages {

@@ -5,6 +5,7 @@ FROM	debian:latest
 ENV     SCRIPT_NAME=/home/exam2/flask.bash 
 
 ARG     USER=exam2
+ARG     REPOADDr=https://github.com/solaris-x86/Webtest_ci.git
 
 RUN     apt-get update \
         && apt-get install -y --no-install-recommends \
@@ -15,9 +16,10 @@ RUN     apt-get update \
 
 RUN     /usr/sbin/useradd -p 123 -s /bin/bash -m $USER \
         && echo '#!/bin/bash' | tee $SCRIPT_NAME \
+        && echo "REPO=$REPOADDR" | tee -a $SCRIPT_NAME \
         && echo "export FLASK_DIR=/home/$USER/flask" | tee -a $SCRIPT_NAME \
         && echo "export FLASK_APP=js_example" | tee -a $SCRIPT_NAME \
-        && echo 'git clone https://github.com/MikhYur1991/student-exam2.git $FLASK_DIR' | tee -a $SCRIPT_NAME \
+        && echo 'git clone $REPO $FLASK_DIR' | tee -a $SCRIPT_NAME \
         && echo 'python3 -m venv $FLASK_DIR/venv' | tee -a $SCRIPT_NAME \
         && echo 'source $FLASK_DIR/venv/bin/activate' | tee -a $SCRIPT_NAME \
         && echo '$FLASK_DIR/venv/bin/pip install -e $FLASK_DIR' | tee -a $SCRIPT_NAME \
