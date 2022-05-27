@@ -6,7 +6,7 @@ pipeline {
         timestamps()
     }
     environment {
-        registry = "solaris86x/Webtest"
+        registry = "solaris86x/webtest"
         registryCredential = 'dockerhub'
     }
     stages {
@@ -26,7 +26,7 @@ pipeline {
         stage('Docker build') {
             steps { script {
                 echo ">>>>>>>>>> Start Image build <<<<<<<<<<<"
-                DocImage=docker.build(registry + ":flask", "-f ./dockerfiles/Dockerfile.flask ./dockerfiles")
+                DocImage=docker.build(registry + ":latest", "-f ./dockerfiles/Dockerfile.flask ./dockerfiles")
             } }
         }
         stage('Docker push') {
