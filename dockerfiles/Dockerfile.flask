@@ -1,0 +1,32 @@
+# syntax=docker/dockerfile:1
+# >>>>>>>> FLASK <<<<<<<<
+FROM	debian:latest
+
+ENV     SCRIPT_NAME=/home/exam2/flask.bash 
+
+ARG     USER=exam2
+
+RUN     apt-get update \
+        && apt-get install -y --no-install-recommends \
+        python3 python3-venv sudo git procps net-tools curl \
+        && apt-get autoremove -yqq --purge \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*
+
+RUN     /usr/sbin/useradd -p 123 -s /bin/bash -m $USER \
+        && echo '#!/bin/bash' | tee $SCRIPT_NAME \
+        && echo "export FLASK_DIR=/home/$USER/flask" | tee -a $SCRIPT_NAME \
+        && echo "export FLASK_APP=js_example" | tee -a $SCRIPT_NAME \
+        && echo 'git clone https://github.com/MikhYur1991/student-exam2.git $FLASK_DIR' | tee -a $SCRIPT_NAME \
+        && echo 'python3 -m venv $FLASK_DIR/venv' | tee -a $SCRIPT_NAME \
+        && echo 'source $FLASK_DIR/venv/bin/activate' | tee -a $SCRIPT_NAME \
+        && echo '$FLASK_DIR/venv/bin/pip install -e $FLASK_DIR' | tee -a $SCRIPT_NAME \
+        && echo '$FLASK_DIR/venv/bin/python3 -m flask run --host 0.0.0.0' | tee -a $SCRIPT_NAME \
+        && chmod a+x $SCRIPT_NAME && chown $USER:$USER $SCRIPT_NAME \
+        && echo '#!/bin/bash' | tee /usr/local/bin/flask.run \
+        && echo "su - $USER -c /home/$USER/flask.bash" | tee -a /usr/local/bin/flask.run \
+        && chmod a+x /usr/local/bin/flask.run
+
+EXPOSE 5000
+CMD     ["/usr/local/bin/flask.run"]
+

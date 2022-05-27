@@ -1,0 +1,41 @@
+pipeline {
+    agent {
+      label 'agent1'
+    } 
+    options {
+        timestamps()
+    }
+    environment {
+        registry = "mmmain/exam2"
+        registryCredential = 'dockerhub'
+    }
+    stages {
+        stage('Test') {
+            steps {
+                echo 'Test'
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    venv/bin/pip install wheel
+                    venv/bin/pip install -e '.[test]'
+                    venv/bin/coverage run -m pytest
+                    venv/bin/coverage report
+                '''
+            }
+        }
+        stage('Docker build') {
+            steps { script {
+                echo ">>>>>>>>>> Start Image build <<<<<<<<<<<"
+                DocImage=docker.build(registry + ":flask", "-f ./dockerfiles/Dockerfile.flask ./dockerfiles")
+            } }
+        }
+        stage('Docker push') {
+            steps { script {
+                echo ">>>>>>>>>>!! Start Image push !!<<<<<<<<<<<"
+                docker.withRegistry('', registryCredential) {
+                    DocImage.push()
+                }
+            } }
+        }
+    }
+}
