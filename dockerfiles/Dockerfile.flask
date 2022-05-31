@@ -5,7 +5,7 @@ FROM	debian:latest
 ENV     SCRIPT_NAME=/home/exam2/flask.bash 
 
 ARG     USER=exam2
-ARG     REPOADDr=https://github.com/solaris-x86/Webtest_ci.git
+ARG     REPOADDR=https://github.com/solaris-x86/Webtest_ci.git
 
 RUN     apt-get update \
         && apt-get install -y --no-install-recommends \
